@@ -8,8 +8,8 @@ Claude Code skills for working in [Lean 4](https://lean-lang.org/) and
 
 Seven skills, split by what you are doing rather than by topic. Topic-shaped
 skills fail in a specific way: a "tactics" skill and a "Mathlib" skill would
-both match every Lean task, so both load, and neither one tells the agent what
-to do next. A task-shaped skill fires when its task comes up, and carries the
+both match every Lean task, so both would load, and neither would tell the
+agent what to do next. A task-shaped skill fires when its task comes up, and carries the
 workflow for it.
 
 | Skill | Fires when | Covers |
@@ -80,7 +80,7 @@ Only `SKILL.md` is required. `lake` and `loogle` are a single file each, and
 The split is deliberate. The frontmatter is always in context, the body loads
 when the skill triggers, and reference files load only when `SKILL.md` points
 at them. Version-pinned inventories go to `references/` for that reason: the
-tactic tables, the error strings, and the linter list are long, and none of
+tactic inventories, the error strings, and the linter list are long, and none of
 them should cost context on a task that never reaches for them. The validator
 enforces the other half of the bargain, failing CI on any file under
 `references/` that no chain of mentions from `SKILL.md` reaches.
