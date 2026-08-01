@@ -1,5 +1,8 @@
 # lean-skills
 
+[![ci](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml)
+![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
+
 Claude Code skills for working in [Lean 4](https://lean-lang.org/) and
 [Mathlib](https://github.com/leanprover-community/mathlib4).
 
@@ -96,6 +99,13 @@ pages.
 ## Related work
 
 [leanprover/skills](https://github.com/leanprover/skills) is the Lean FRO's own skill set, aimed at contributing to Lean and Mathlib upstream: proof writing, MWE minimization, bisection, and PR conventions. [cameronfreer/lean4-skills](https://github.com/cameronfreer/lean4-skills) is a proving workflow pack with review and golf commands. This repository sits downstream of both: it is about building and auditing your own formalization, and most of its length goes to the checks nothing upstream covers — whether a statement means what it claims, and whether the prose citing it is still true.
+
+Two sibling repositories put these skills to work.
+[lean-self-audit-template](https://github.com/matt-w-horn/lean-self-audit-template)
+is a fork-ready Lean 4 + Mathlib template whose claims ledger is the kind of
+project `lean-claims-review` referees.
+[Overload](https://github.com/matt-w-horn/overload) is the formalization these
+skills were developed against, with every gate live.
 
 ## Contributing
 
