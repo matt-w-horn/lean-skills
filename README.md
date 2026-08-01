@@ -53,10 +53,7 @@ done
 ```
 
 Or add the repository as a plugin marketplace:
-
-```
-/plugin marketplace add matt-w-horn/lean-skills
-```
+`/plugin marketplace add matt-w-horn/lean-skills`.
 
 The `loogle` skill documents how to install the
 [loogle](https://github.com/nomeata/loogle) binary. That install is optional:
