@@ -8,7 +8,6 @@ loudly on a reference file with no fenced block. Run:
     python3 -m unittest discover -s skills/lean-claims-review/scripts
 """
 import json
-import os
 import subprocess
 import sys
 import tempfile
@@ -69,6 +68,20 @@ class TestDeps(Fixture):
         rows, deps = sweep.load_manifest(self.manifest)
         self.assertEqual(sorted(deps["Lib.leaf"]), ["Lib.base", "Lib.mid"])
         self.assertEqual(deps["Lib.base"], [])
+
+    def test_cyclic_manifest_fails_loudly(self):
+        # Two rows consuming each other: frontier would otherwise report
+        # them "waiting on deps" forever and plan would print wrong depths.
+        m = self.root / "cyclic.json"
+        m.write_text(json.dumps([
+            {"name": "A", "kind": "theorem", "type": "T", "doc": "d",
+             "consumers": ["B"]},
+            {"name": "B", "kind": "theorem", "type": "T", "doc": "d",
+             "consumers": ["A"]},
+        ]))
+        with self.assertRaises(SystemExit) as ctx:
+            sweep.load_manifest(m)
+        self.assertIn("cycle", str(ctx.exception))
 
     def test_namespace_parent_is_a_dep(self):
         # `S.f` depends on `S` even with no consumers edge — context hashes
@@ -166,13 +179,42 @@ class TestFrontier(Fixture):
         self.assertIn("Lib.base", script)  # re-dispatched despite ledger
 
     def test_scripts_carry_config(self):
-        p = run_cli(self.args(["1", "--model", "opus", "--effort", "high",
+        # Values differ from every argparse default, so a dropped flag fails.
+        p = run_cli(self.args(["1", "--model", "sonnet", "--effort", "medium",
                                "--chunk", "4"]), self.root)
         self.assertEqual(p.returncode, 0, p.stderr)
         script = (self.root / "claims-r1-a.js").read_text()
-        self.assertIn('model: "opus"', script)
-        self.assertIn('effort: "high"', script)
+        self.assertIn('model: "sonnet"', script)
+        self.assertIn('effort: "medium"', script)
         self.assertIn("const CHUNK = 4", script)
+
+    def test_missing_exclude_file_fails(self):
+        p = run_cli(self.args(["1", "--exclude",
+                               str(self.root / "typo.txt")]), self.root)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("--exclude file not found", p.stderr)
+
+    def test_missing_redo_file_fails(self):
+        p = run_cli(self.args(["1", "--redo",
+                               str(self.root / "typo.txt")]), self.root)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("--redo file not found", p.stderr)
+
+    def test_splits_beyond_alphabet_fails(self):
+        p = run_cli((["--manifest", str(self.manifest), "--ledger",
+                      str(self.ledger), "frontier", "r1", "27",
+                      "--outdir", str(self.root)]), self.root)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("splits", p.stderr)
+
+    def test_label_with_quote_rejected(self):
+        # The label lands inside single-quoted JS; a quote would emit N
+        # syntactically broken workflow scripts.
+        p = run_cli((["--manifest", str(self.manifest), "--ledger",
+                      str(self.ledger), "frontier", "r1'x", "1",
+                      "--outdir", str(self.root)]), self.root)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("label", p.stderr)
 
 
 class TestRecord(Fixture):
@@ -206,8 +248,23 @@ class TestRecord(Fixture):
         self.assertEqual((row["name"], row["round"]), ("Lib.mid", "rX"))
 
     def test_writer_failure_aborts(self):
-        p = self.record([{"name": "FAILNAME", "verdict": "supported", "text": ""}])
+        # The finding sorts before the failing writer call; the abort must
+        # leave the findings file unwritten so a re-run cannot duplicate rows.
+        p = self.record([
+            {"name": "Lib.mid", "verdict": "prose-overclaims", "text": "ev"},
+            {"name": "FAILNAME", "verdict": "supported", "text": ""},
+        ])
         self.assertNotEqual(p.returncode, 0)
+        self.assertFalse(self.findings.exists())
+
+    def test_wrapper_without_result_key_fails(self):
+        rf = self.root / "resultless.json"
+        rf.write_text(json.dumps({"summary": "s", "error": "timeout"}))
+        p = run_cli(["record", str(rf), "rX",
+                     "--ledger-writer", f"{sys.executable} {self.writer}",
+                     "--findings", str(self.findings)], self.root)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("no 'result' key", p.stderr)
 
     def test_task_output_wrapper_unwrapped(self):
         rf = self.root / "wrapped.json"

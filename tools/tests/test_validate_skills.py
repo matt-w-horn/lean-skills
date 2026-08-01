@@ -75,6 +75,20 @@ class TestStructure(Tree):
         self.assertTrue(any("description is 5 chars" in p
                             for p in self.check("terse")))
 
+    def test_quoted_name_matches_directory(self):
+        # The runtime's YAML parser sees `lake`, not `"lake"`.
+        self.make_skill("quoted",
+                        f'---\nname: "quoted"\ndescription: {DESC}\n---\n')
+        self.assertEqual(self.check("quoted"), [])
+
+    def test_folded_description_measured_without_indicator(self):
+        # A `>-` block scalar: the indicator is not part of the value, and the
+        # continuation lines are.
+        self.make_skill("folded",
+                        "---\nname: folded\ndescription: >-\n"
+                        f"  {DESC}\n  {DESC}\n---\n")
+        self.assertEqual(self.check("folded"), [])
+
 
 class TestReferences(Tree):
     def test_missing_reference_file_fails(self):
@@ -97,6 +111,51 @@ class TestReferences(Tree):
                         f"---\nname: talker\ndescription: {DESC}\n---\n"
                         "Run `scripts/verify.sh` in your project.\n")
         self.assertEqual(self.check("talker"), [])
+
+    def test_markdown_link_reference_checked(self):
+        self.make_skill("linker",
+                        f"---\nname: linker\ndescription: {DESC}\n---\n"
+                        "See [the guide](references/gone.md).\n")
+        self.assertTrue(any("missing file 'references/gone.md'" in p
+                            for p in self.check("linker")))
+
+    def test_non_md_extension_checked_both_ways(self):
+        # A mentioned .lean reference file passes; a dangling one is flagged.
+        self.make_skill("leanly",
+                        f"---\nname: leanly\ndescription: {DESC}\n---\n"
+                        "See `references/demo.lean` and `references/gone.lean`.\n",
+                        files=(("references/demo.lean", "example : True := ⟨⟩"),))
+        problems = self.check("leanly")
+        self.assertTrue(any("missing file 'references/gone.lean'" in p
+                            for p in problems))
+        self.assertFalse(any("demo.lean" in p for p in problems))
+
+    def test_self_mention_does_not_rescue_orphan(self):
+        # A reference file whose only mention is its own is still unreachable.
+        self.make_skill("navel",
+                        f"---\nname: navel\ndescription: {DESC}\n---\nBody.\n",
+                        files=(("references/orphan.md",
+                                "This file: `references/orphan.md`"),))
+        self.assertTrue(any("orphan.md" in p and "never be loaded" in p
+                            for p in self.check("navel")))
+
+    def test_mention_chain_reaches_second_reference(self):
+        # SKILL.md -> a.md -> b.md: b is reachable, so no problem.
+        self.make_skill("chain",
+                        f"---\nname: chain\ndescription: {DESC}\n---\n"
+                        "See `references/a.md`.\n",
+                        files=(("references/a.md", "Then `references/b.md`."),
+                               ("references/b.md", "leaf")))
+        self.assertEqual(self.check("chain"), [])
+
+    def test_own_name_prefixed_path_checked(self):
+        # `self-skill/references/gone.md` written inside self-skill must be
+        # resolved, not skipped.
+        self.make_skill("self-skill",
+                        f"---\nname: self-skill\ndescription: {DESC}\n---\n"
+                        "See `self-skill/references/gone.md`.\n")
+        self.assertTrue(any("missing file 'self-skill/references/gone.md'" in p
+                            for p in self.check("self-skill")))
 
 
 class TestCrossSkill(Tree):
@@ -130,6 +189,36 @@ class TestCrossSkill(Tree):
     def test_known_sibling_passes(self):
         names = self.two_skills("The `beta-skill` skill covers the rest.\n")
         self.assertEqual(self.check("alpha-skill", names), [])
+
+    def test_lean_toolchain_not_a_sibling(self):
+        # A real ecosystem filename on a line containing "skill" is not a
+        # cross-reference.
+        self.make_skill("solo",
+                        f"---\nname: solo\ndescription: {DESC}\n---\n"
+                        "This skill never edits `lean-toolchain`.\n")
+        self.assertEqual(self.check("solo"), [])
+
+
+class TestReadme(Tree):
+    def readme(self, text):
+        (self.root / "README.md").write_text(text, encoding="utf-8")
+
+    def test_missing_skill_flagged(self):
+        self.readme("| `listed` | x | y |\n")
+        problems = vs.check_readme({"listed", "unlisted"})
+        self.assertTrue(any("'unlisted' is not mentioned" in p for p in problems))
+
+    def test_stale_row_flagged(self):
+        self.readme("| `ghost` | x | y |\n")
+        problems = vs.check_readme({"ghost", "real"})
+        self.assertTrue(any("'real' is not mentioned" in p for p in problems))
+        self.readme("| `ghost` | x | y |\n| `real` | x | y |\n")
+        problems = vs.check_readme({"real"})
+        self.assertTrue(any("table row names 'ghost'" in p for p in problems))
+
+    def test_matching_table_passes(self):
+        self.readme("| `real` | x | y |\n")
+        self.assertEqual(vs.check_readme({"real"}), [])
 
 
 class RealRepo(unittest.TestCase):
