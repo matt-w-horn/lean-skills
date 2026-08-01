@@ -1,0 +1,19 @@
+{
+  "name": "lean-skills",
+  "owner": {
+    "name": "Matt Horn",
+    "email": "matt@matthorn.io"
+  },
+  "metadata": {
+    "description": "Claude Code skills for working in Lean 4 and Mathlib",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "lean-skills",
+      "source": "./",
+      "description": "Proving, refactoring, LaTeX/prose sync, verification, claims review, Lake builds, and Mathlib search for Lean 4 projects.",
+      "version": "1.0.0"
+    }
+  ]
+}

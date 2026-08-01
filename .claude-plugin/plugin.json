@@ -1,0 +1,11 @@
+{
+  "name": "lean-skills",
+  "description": "Proving, refactoring, LaTeX/prose sync, verification, claims review, Lake builds, and Mathlib search for Lean 4 projects.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Matt Horn",
+    "email": "matt@matthorn.io"
+  },
+  "homepage": "https://github.com/matt-w-horn/lean-skills",
+  "license": "Apache-2.0"
+}
