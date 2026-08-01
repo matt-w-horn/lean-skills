@@ -1,0 +1,15 @@
+# Dependabot version updates. This repository ships Markdown and one
+# standard-library Python script, so there is no package ecosystem to track —
+# only the versions of the actions used in .github/workflows.
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: 'chore(ci)'

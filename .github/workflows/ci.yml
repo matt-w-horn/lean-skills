@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege: this workflow only reads the tree and validates Markdown.
+# Set explicitly so the job stays safe if the repo-level default is ever widened.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Validate skill structure & cross-references
+        run: python3 tools/validate_skills.py
+      - name: Validator tests
+        run: python3 -m unittest discover -s tools/tests -v
+      - name: Script tests (bundled skill tooling)
+        run: python3 -m unittest discover -s skills/lean-claims-review/scripts -v
