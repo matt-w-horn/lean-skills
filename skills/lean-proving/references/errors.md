@@ -4,11 +4,13 @@ Lean's errors are precise but rarely phrased as advice. The wording below was
 read from Lean core source at **v4.32.0**; messages get rephrased between
 releases, so match on the shape rather than character-for-character.
 
-A worked example of that drift: the 2025 edition of *The Hitchhiker's Guide to
-Logical Verification* quotes the failing-induction error as `index in target's
-type is not a variable`. At v4.32.0 the same condition reads `major premise
-type index … is not a variable`. Same cause, different words — which is why
-grepping your own toolchain beats recalling a message.
+A worked example of why: the failing-induction condition has two wordings in
+the v4.32.0 source. The `induction` tactic prints `Invalid target: Index in
+target's type is not a variable` (Elab/Tactic/Induction.lean); an internal
+path carries `major premise type index … is not a variable`
+(Meta/Tactic/Induction.lean), and guides quote one or the other. Same cause,
+different words — which is why grepping your own toolchain beats recalling a
+message.
 
 ```sh
 # Find the source of any error you are looking at
@@ -119,12 +121,14 @@ appears after a `simp` you expected to close everything, the remaining goal is
 usually a side condition (`x ≠ 0`, `0 < n`, a `Summable`), which is a hint that
 the statement needs that as a hypothesis.
 
-### `major premise type index … is not a variable`
+### `Invalid target: Index in target's type is not a variable`
 
 `induction h` where the inductive predicate's argument is a compound term
 rather than a variable. Generalize the term to a variable carrying an equation,
 and add `generalizing` for any variable the induction hypothesis must be
-instantiated at a different value. Worked example in `tactics.md`.
+instantiated at a different value. Worked example in `tactics.md`. (The same
+condition reads `major premise type index … is not a variable` on an internal
+path; match on the shape.)
 
 The message suggests `cases` as an alternative; that works when you need the
 case split without induction hypotheses.

@@ -231,11 +231,17 @@ the `simp only` it printed is usually the last step before committing a proof.
 
 ## Induction pitfalls
 
-`induction h` fails with `index in target's type is not a variable` when the
-inductive predicate's argument is a compound term rather than a variable:
+`induction h` fails with `Invalid target: Index in target's type is not a
+variable` when the inductive predicate's argument is a compound term rather
+than a variable. A self-contained toy (Mathlib's `Even` is an existential
+`def`, not an inductive, so it cannot show this):
 
 ```lean
--- hev : Even (2 * n + 1) ⊢ False     -- induction hev fails here
+inductive Ev : Nat → Prop
+  | zero : Ev 0
+  | add_two : ∀ n, Ev n → Ev (n + 2)
+
+-- hev : Ev (2 * n + 1) ⊢ False     -- induction hev fails here
 ```
 
 The fix has two parts. Generalize the compound term to a variable carrying an
@@ -243,7 +249,7 @@ equation, and then `generalizing` any variable the induction hypothesis needs
 to be instantiated at a *different* value:
 
 ```lean
-theorem not_even_two_mul_add_one (m n : ℕ) (hm : m = 2 * n + 1) : ¬ Even m := by
+theorem not_ev_two_mul_add_one (m n : ℕ) (hm : m = 2 * n + 1) : ¬ Ev m := by
   intro h
   induction h generalizing n with
   | zero => omega

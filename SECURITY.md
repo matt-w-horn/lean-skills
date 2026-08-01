@@ -13,7 +13,8 @@ acknowledge reports as quickly as I can, usually within a few days.
 ## Scope
 
 This repository contains Markdown instructions for AI coding agents. It ships
-no executable code beyond two standard-library Python scripts exercised in CI
-(the validator and the claims-review sweep renderer), and it has no runtime
-dependencies. The most plausible issue here is a skill file that instructs an
-agent to run something harmful. Reports of that kind are in scope and welcome.
+no executable code beyond two standard-library Python tools and their test
+files, all exercised in CI (the validator and the claims-review sweep
+renderer), and it has no runtime dependencies. The most plausible issue here
+is a skill file that instructs an agent to run something harmful. Reports of
+that kind are in scope and welcome.

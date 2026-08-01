@@ -81,22 +81,11 @@ yours. Treat a hit as a name to confirm against your pin with `#check`.
 ## Has anyone formalized this theorem at all?
 
 A different question from "is there a lemma": whether a named classical result
-exists in Lean anywhere.
-
-- **100 theorems** — <https://leanprover-community.github.io/100.html> —
-  Freek Wiedijk's benchmark list of 100 classical theorems, tracking which are
-  formalized in Lean and under what declaration name. As of the last crawl, 84
-  of 100 were formalized, each entry giving the author and the mathlib
-  declaration (`irrational_sqrt_two`, `Complex.exists_root`,
-  `Nat.exists_infinite_primes`, `Matrix.aeval_self_charpoly`, …).
-- **Not yet formalized** —
-  <https://leanprover-community.github.io/100-missing.html> — the complement,
-  16 entries including Fermat's Last Theorem, the Four Color Problem, Green's
-  Theorem, Pick's Theorem, and the transcendence of π.
-
-The `lean-verification` skill uses these for the "did someone already do
-this?" check. From the proving side they answer a narrower question: whether
-the ambient theory you need is already built out.
+exists in Lean anywhere. The 100-theorems tracking pages, the search order,
+and the reporting format live in the `lean-verification` skill:
+`lean-verification/references/prior-art.md` owns that check, counts included.
+From the proving side its answer settles a narrower question: whether the
+ambient theory you need is already built out.
 
 ## When nothing exists
 

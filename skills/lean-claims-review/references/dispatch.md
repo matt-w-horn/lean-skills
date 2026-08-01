@@ -97,7 +97,9 @@ log; `plan` previews the wave sizes. Project specifics (manifest,
 ledger, probe, ledger-writer command, referee agent type/model/effort,
 per-run concurrency) are flags; the referee prompt is built from this
 skill's `references/referee-protocol.md` plus a fixed verdict-line
-trailer, so the protocol text keeps one home.
+trailer, so the protocol text keeps one home. The renderer's `--effort`
+default is `high`, the safe tier; pass `--effort medium` when
+calibration clears the cheaper tier (the policy under "Effort" below).
 
 Each emitted script *embeds* the rendered pair blocks and the protocol
 text as constants. Passing rendered prompts through the orchestrator's
@@ -112,8 +114,10 @@ treat changing it like changing the protocol.
 
 Enforce the probe-memory concurrency cap in the script (dispatch in
 chunks of the cap's size) rather than trusting the runner's default. A
-referee reply with no verdict line is a truncation: record it
-`intent-unclear` and escalate, never infer.
+referee reply with no verdict line is a truncation: the renderer labels
+it `unparsed` (a lost dispatch `dispatch-error`) and routes it to the
+findings log, never the ledger. Treat both labels like `intent-unclear`:
+escalate, never infer.
 
 An interrupted run (crash, restart) loses nothing when the runner
 journals per-referee results: resume the same run and completed referees
@@ -145,8 +149,8 @@ sweep runs at `high` and costs roughly a third more.
 Four layers, hard to soft:
 
 1. Per-referee `max_tokens` around 16k — a hard ceiling on thinking plus
-   text. Truncation auto-verdicts `intent-unclear` and escalates; it
-   never becomes a pass.
+   text. A truncated reply lands in the findings log (labeled `unparsed`,
+   "Dispatch mechanics" above) and escalates; it never becomes a pass.
 2. Per-referee effort, above.
 3. Per-run budget, dispatcher-enforced from actual usage reported per
    referee. Stop dispatching when it is spent; the ledger is the resume

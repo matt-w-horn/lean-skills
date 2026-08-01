@@ -1,6 +1,7 @@
 # gitleaks config — keeps every built-in secret rule. This repository holds only
-# Markdown documentation and one stdlib Python script, so there are no secrets
-# to manage; this is a backstop against an accidental paste into an example.
+# Markdown documentation and two stdlib Python tools with their tests, so there
+# are no secrets to manage; this is a backstop against an accidental paste into
+# an example.
 # https://github.com/gitleaks/gitleaks#configuration
 title = "lean-skills"
 

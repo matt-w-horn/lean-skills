@@ -1,6 +1,7 @@
-# Dependabot version updates. This repository ships Markdown and one
-# standard-library Python script, so there is no package ecosystem to track —
-# only the versions of the actions used in .github/workflows.
+# Dependabot version updates. This repository ships Markdown and two
+# standard-library Python tools with their tests, so there is no package
+# ecosystem to track — only the versions of the actions used in
+# .github/workflows.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
 updates:

@@ -59,8 +59,9 @@ The `loogle` skill documents how to install the
 [loogle](https://github.com/nomeata/loogle) binary. That install is optional:
 a hosted instance at <https://loogle.lean-lang.org/> needs no install. Nothing
 else here has dependencies. The skills are Markdown. The only code is two
-standard-library Python scripts: the validator in `tools/` and the sweep
-renderer in the claims-review skill. CI runs both.
+standard-library Python tools, each with its tests: the validator in `tools/`
+and the sweep renderer in the claims-review skill. CI runs the validator and
+both test suites.
 
 ## Layout
 
@@ -80,8 +81,8 @@ table in `SKILL.md` costs context on every Lean task.
 Written against Lean 4 and Mathlib at `v4.32.0`, with later additions checked
 at `v4.32.1`. Tactic inventories, linter names, and error strings were
 extracted from those toolchains rather than recalled. Version-specific claims
-are marked, and each reference file says how to regenerate its lists for a
-different pin.
+are marked, and the reference files that carry version-pinned inventories say
+how to regenerate them for a different pin.
 
 Background reading drawn on: [Theorem Proving in Lean
 4](https://lean-lang.org/theorem_proving_in_lean4/), [The Hitchhiker's Guide to

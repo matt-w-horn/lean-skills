@@ -4,7 +4,9 @@ One referee per declaration. The dispatcher builds the prompt in strict
 cache-stability order: this protocol text first, byte-identical across
 every referee of a pool (no timestamps, no pair data), then the per-pair
 block, then the agentic turns. Changing the protocol text or the effort
-level starts a new cache pool; do neither mid-sweep.
+level starts a new cache pool; do neither mid-sweep (the full invalidator
+list, verdict trailer included: `references/dispatch.md`, "Cache
+structure" and "Dispatch mechanics").
 
 ## The prompt
 
@@ -93,8 +95,9 @@ words, the quoted statement fragment, and the probes run with results.
 the maintainer can elaborate.
 
 Two constraints on the schema's use. A truncated referee (hit its token
-ceiling) is recorded `intent-unclear` and escalated, never inferred. And
-the protocol asks for evidence and probe results, not reasoning
-transcription — prompts that tell a model to echo its internal reasoning
-as response text trigger refusals on current models and add nothing the
-evidence does not.
+ceiling) is escalated, never inferred; the bundled renderer labels such
+replies `unparsed`, outside the five verdicts, and routes them to the
+findings log like `intent-unclear`. And the protocol asks for evidence
+and probe results, not reasoning transcription — prompts that tell a
+model to echo its internal reasoning as response text trigger refusals
+on current models and add nothing the evidence does not.

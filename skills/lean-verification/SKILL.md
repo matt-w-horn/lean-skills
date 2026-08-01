@@ -41,7 +41,7 @@ cannot.
 
 ```sh
 lake build
-grep -rn "\bsorry\b\|\bstop\b\|\badmit\b" --include="*.lean" YourLib/
+grep -rn "\bsorry\b\|\badmit\b\|\bstop\b\|sorryAx" --include="*.lean" YourLib/
 lake exe runLinter YourLib        # if Batteries is a dependency
 ```
 

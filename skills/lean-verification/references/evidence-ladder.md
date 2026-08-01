@@ -74,9 +74,14 @@ well as in the build root, or coverage silently shrinks as modules are added.
 
 ```sh
 # does every module reach the audit root?
-diff <(ls YourLib/*.lean | xargs -n1 basename | sed 's/.lean//' | sort) \
-     <(grep -oE 'import YourLib\.[A-Za-z.]+' YourLib/AxiomAudit.lean | sed 's/.*\.//' | sort)
+diff <(find YourLib -name '*.lean' ! -name 'AuditRoot.lean' \
+         | sed 's|/|.|g; s|\.lean$||' | sort) \
+     <(grep -oE 'import YourLib[A-Za-z0-9.]*' YourLib/AuditRoot.lean \
+         | sed 's/^import //' | sort)
 ```
+
+`find` rather than `ls YourLib/*.lean`, because a non-recursive glob makes
+modules in subdirectories invisible to exactly this check.
 
 Writing one is a few lines of metaprogramming over `Lean.Environment` and
 `CollectAxioms`; the Lean 4 metaprogramming documentation covers the pattern.
@@ -88,7 +93,12 @@ lake exe runLinter YourLib
 ```
 
 Available when Batteries is a dependency. Verified present at Batteries for
-Lean v4.32.0:
+Lean v4.32.0 — all eleven of them; regenerate the list for your pin with
+
+```sh
+grep -rhoE '@\[env_linter[^]]*\]\s*def \w+' \
+  .lake/packages/batteries/Batteries/Tactic/Lint/*.lean
+```
 
 | Linter | Catches | Default |
 |---|---|---|
@@ -101,6 +111,8 @@ Lean v4.32.0:
 | `simpNF` | `@[simp]` lemmas not in simp normal form | on |
 | `simpComm` | Commutativity simp lemmas that loop | on |
 | `explicitVarsOfIff` | Iff statements with implicit variables | off |
+| `impossibleInstance` | Instances with hypotheses nothing can satisfy | on |
+| `nonClassInstance` | `instance`s whose type is not a class | on |
 
 The gap worth naming in any audit: **`docBlameThm` is disabled by default**, so
 a library can pass `runLinter` with every theorem undocumented. Docstring

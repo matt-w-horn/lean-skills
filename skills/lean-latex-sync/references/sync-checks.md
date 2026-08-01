@@ -147,8 +147,12 @@ live declarations look dead.
 
 ```sh
 grep -rn "\\\\sorry\|\\\\lean{sorry}\|TODO\|TBD\|XXX" --include="*.tex" .
-grep -rn "\bsorry\b" --include="*.lean" YourLib/ | grep -v "^.*--"
+grep -rn "\bsorry\b" --include="*.lean" YourLib/ | grep -v -E ':[0-9]+:[[:space:]]*--'
 ```
+
+The filter drops whole-line comments only. A `sorry` beside a trailing
+comment (`exact sorry -- FIXME`) still surfaces; a `sorry` mentioned inside
+a trailing comment false-positives, which errs in the right direction.
 
 A document citing `\lean{sorry}` deliberately (to discuss it) is fine; one
 citing it accidentally is claiming a proof exists that does not.
