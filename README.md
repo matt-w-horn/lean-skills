@@ -6,18 +6,20 @@
 Claude Code skills for working in [Lean 4](https://lean-lang.org/) and
 [Mathlib](https://github.com/leanprover-community/mathlib4).
 
-Seven skills, split by what you are actually doing rather than by topic. A
-"tactics" skill and a "Mathlib" skill both fire on every task, and neither
-tells the agent what to do next. These fire one at a time.
+Seven skills, split by what you are doing rather than by topic. Topic-shaped
+skills fail in a specific way: a "tactics" skill and a "Mathlib" skill would
+both match every Lean task, so both would load, and neither would tell the
+agent what to do next. A task-shaped skill fires when its task comes up, and carries the
+workflow for it.
 
 | Skill | Fires when | Covers |
 |---|---|---|
 | `lean-proving` | You are changing Lean source, or asking whether something is provable | Feasibility, prior art, statement design, tactics, decoding errors, Mathlib naming |
 | `lean-refactoring` | You are simplifying or golfing existing proofs | The frozen-statements contract, proof-vs-statement changes, the slice loop, a working elaborated-statement lock |
-| `lean-latex-sync` | Prose describes Lean code — a paper, README, or docstring | Claim-versus-statement auditing, drift classes, `\lean{}` citation checks, listings/minted setup |
+| `lean-latex-sync` | Prose describes Lean code: a paper, README, or docstring | Claim-versus-statement auditing, drift classes, resyncing prose after a stream of Lean commits, `\lean{}` citation checks, listings/minted setup |
 | `lean-verification` | You are asking whether work is actually correct or complete | Build and axiom evidence, junk values and vacuity, prior-art searches, acceptance criteria |
 | `lean-claims-review` | A project keeps a claims ledger and pairs need verdicts | Blinded referee dispatch, verdict schema, probe battery, wave ordering, calibration |
-| `lake` | The build is the problem | `lake build`, Mathlib cache, toolchains, dependencies, troubleshooting |
+| `lake` | The build, the toolchain, or a new project's setup is the problem | `lake build`, Mathlib cache, toolchains, dependencies, `lake test`/`lake lint` drivers, module-system migration, troubleshooting |
 | `loogle` | You need a lemma that probably already exists | Shape-based and conclusion-based search over Mathlib |
 
 ## The idea
@@ -67,14 +69,21 @@ both test suites.
 
 ```
 skills/<name>/
-├── SKILL.md        # the workflow — loaded when the skill fires
-└── references/     # detail — loaded only when SKILL.md points at it
+├── SKILL.md        # the workflow, loaded when the skill fires
+├── references/     # detail, loaded only when SKILL.md points at it
+└── scripts/        # bundled tooling, where a skill has any
 ```
 
-The split is deliberate: `SKILL.md` stays short, and detail goes into
-`references/`. The frontmatter is always in context. The body loads when the
-skill triggers, and reference files load only when needed. A 400-line tactics
-table in `SKILL.md` costs context on every Lean task.
+Only `SKILL.md` is required. `lake` and `loogle` are a single file each, and
+`lean-claims-review` is the one skill that bundles code.
+
+The split is deliberate. The frontmatter is always in context, the body loads
+when the skill triggers, and reference files load only when `SKILL.md` points
+at them. Version-pinned inventories go to `references/` for that reason: the
+tactic inventories, the error strings, and the linter list are long, and none of
+them should cost context on a task that never reaches for them. The validator
+enforces the other half of the bargain, failing CI on any file under
+`references/` that no chain of mentions from `SKILL.md` reaches.
 
 ## Sources
 
@@ -95,7 +104,14 @@ pages.
 
 ## Related work
 
-[leanprover/skills](https://github.com/leanprover/skills) is the Lean FRO's own skill set, aimed at contributing to Lean and Mathlib upstream: proof writing, MWE minimization, bisection, and PR conventions. [cameronfreer/lean4-skills](https://github.com/cameronfreer/lean4-skills) is a proving workflow pack with review and golf commands. This repository sits downstream of both: it is about building and auditing your own formalization, and most of its length goes to the checks nothing upstream covers — whether a statement means what it claims, and whether the prose citing it is still true.
+[leanprover/skills](https://github.com/leanprover/skills) is the Lean FRO's own
+skill set, aimed at contributing to Lean and Mathlib upstream: proof writing,
+MWE minimization, bisection, and PR conventions.
+[cameronfreer/lean4-skills](https://github.com/cameronfreer/lean4-skills) is a
+proving workflow pack with review and golf commands. This repository sits
+downstream of both. It is about building and auditing your own formalization,
+and most of its length goes to the checks nothing upstream covers: whether a
+statement means what it claims, and whether the prose citing it is still true.
 
 Two sibling repositories put these skills to work.
 [lean-self-audit-template](https://github.com/matt-w-horn/lean-self-audit-template)
