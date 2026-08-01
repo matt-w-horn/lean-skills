@@ -168,6 +168,17 @@ the prompt, dominate.
 
 ## Models
 
+Frontier-class capability is a working requirement of this protocol, not
+an optimization. A referee must author elaborating Lean probes — construct
+a satisfying instance, delete a hypothesis and re-prove, state and prove
+the docstring's stronger reading — and the configurations that have passed
+calibration to date are top-tier models (Opus 5 / Fable class or
+equivalent) at high effort. Do not assume a cheaper tier works: its
+verdicts count only after it passes the same calibration, and until one
+does, treat the top tier as a hard dependency of the review tier. The
+mechanical gates a project runs (locks, audits, scans) need no model at
+all; this requirement is the referee's alone.
+
 Calibrate at least two model tiers before sweeping. If the cheaper tier
 is clean on calibration, sweep with it and spend part of the difference
 on the stronger tier as auditor: it re-judges every escalation plus a
