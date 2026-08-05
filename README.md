@@ -3,14 +3,18 @@
 [![ci](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml)
 ![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
-Claude Code skills for working in [Lean 4](https://lean-lang.org/) and
-[Mathlib](https://github.com/leanprover-community/mathlib4).
+Claude Code skills for building and auditing your own
+[Lean 4](https://lean-lang.org/) +
+[Mathlib](https://github.com/leanprover-community/mathlib4)
+formalization: whether a statement means what it claims, and whether the
+prose citing it is still true. Tactic inventories, linter names, and
+error strings were extracted from the toolchain rather than recalled.
 
-Seven skills, split by what you are doing rather than by topic. Topic-shaped
-skills fail in a specific way: a "tactics" skill and a "Mathlib" skill would
-both match every Lean task, so both would load, and neither would tell the
-agent what to do next. A task-shaped skill fires when its task comes up, and carries the
-workflow for it.
+Seven skills, one per job. Topic-shaped skills fail in a specific way: a
+"tactics" skill and a "Mathlib" skill would both match every Lean task,
+so both would load, and neither would tell the agent what to do next. A
+task-shaped skill fires when its task comes up, and carries the workflow
+for it.
 
 | Skill | Fires when | Covers |
 |---|---|---|
@@ -22,7 +26,7 @@ workflow for it.
 | `lake` | The build, the toolchain, or a new project's setup is the problem | `lake build`, Mathlib cache, toolchains, dependencies, `lake test`/`lake lint` drivers, module-system migration, troubleshooting |
 | `loogle` | You need a lemma that probably already exists | Shape-based and conclusion-based search over Mathlib |
 
-## The idea
+## The failure the kernel doesn't catch
 
 Two things go wrong in Lean work, and they fail independently.
 
@@ -34,25 +38,34 @@ denominator for reasons that have nothing to do with the mathematics. These
 skills spend most of their length on that second failure, because it is the one
 you get no help with.
 
-The other bias throughout is toward verification against the toolchain on disk
-rather than recall. Mathlib renames things continuously: `push_neg` logs a
-deprecation warning at v4.32.0, and `div_add_div_same` is gone. A remembered
-lemma name costs a full rebuild to disprove. The full Mathlib source sits in
-`.lake/packages/mathlib/` at the revision you pinned. A grep of that source is
-faster and more reliable than memory. The skills say so repeatedly, and give
-the commands.
+The other bias throughout is toward checking the toolchain on disk before
+trusting memory. Mathlib moves, and a model's recollection of it goes stale
+quietly. Two you can check yourself, at Mathlib `v4.32.1`:
+
+- `Mathlib/Tactic/Push.lean` emits the warning
+  `` `push_neg` has been deprecated. Prefer using `push Not` instead. ``
+- The root-namespace `div_add_div_same` is gone. Only
+  `ENNReal.div_add_div_same` survives — so a bare grep still returns a hit,
+  and a model will still offer you the lemma that no longer applies.
+
+Both are one grep away in `.lake/packages/mathlib/`. The skills say so
+repeatedly, and give the commands.
 
 ## Installing
 
-Symlink whichever skills you want into `~/.claude/skills/`:
+Symlink all seven into `~/.claude/skills/`:
 
 ```sh
 git clone https://github.com/matt-w-horn/lean-skills.git
 cd lean-skills
+mkdir -p ~/.claude/skills
 for s in skills/*/; do
   ln -s "$PWD/$s" ~/.claude/skills/"$(basename "$s")"
 done
 ```
+
+For one skill, link it by name:
+`ln -s "$PWD/skills/lean-proving" ~/.claude/skills/lean-proving`.
 
 Or add the repository as a plugin marketplace:
 `/plugin marketplace add matt-w-horn/lean-skills`.
@@ -77,9 +90,9 @@ skills/<name>/
 Only `SKILL.md` is required. `lake` and `loogle` are a single file each, and
 `lean-claims-review` is the one skill that bundles code.
 
-The split is deliberate. The frontmatter is always in context, the body loads
-when the skill triggers, and reference files load only when `SKILL.md` points
-at them. Version-pinned inventories go to `references/` for that reason: the
+The frontmatter is always in context, the body loads when the skill triggers,
+and reference files load only when `SKILL.md` points at them. Version-pinned
+inventories go to `references/` for that reason: the
 tactic inventories, the error strings, and the linter list are long, and none of
 them should cost context on a task that never reaches for them. The validator
 enforces the other half of the bargain, failing CI on any file under
@@ -88,10 +101,10 @@ enforces the other half of the bargain, failing CI on any file under
 ## Sources
 
 Written against Lean 4 and Mathlib at `v4.32.0`, with later additions checked
-at `v4.32.1`. Tactic inventories, linter names, and error strings were
-extracted from those toolchains rather than recalled. Version-specific claims
-are marked, and the reference files that carry version-pinned inventories say
-how to regenerate them for a different pin.
+at `v4.32.1` — that is the toolchain the tactic inventories, linter names, and
+error strings were extracted from. Version-specific claims are marked, and the
+reference files that carry version-pinned inventories say how to regenerate
+them for a different pin.
 
 Background reading drawn on: [Theorem Proving in Lean
 4](https://lean-lang.org/theorem_proving_in_lean4/), [The Hitchhiker's Guide to
@@ -109,9 +122,8 @@ skill set, aimed at contributing to Lean and Mathlib upstream: proof writing,
 MWE minimization, bisection, and PR conventions.
 [cameronfreer/lean4-skills](https://github.com/cameronfreer/lean4-skills) is a
 proving workflow pack with review and golf commands. This repository sits
-downstream of both. It is about building and auditing your own formalization,
-and most of its length goes to the checks nothing upstream covers: whether a
-statement means what it claims, and whether the prose citing it is still true.
+downstream of both, and most of its length goes to the checks nothing upstream
+covers. If you are contributing to Mathlib itself, start with the FRO's set.
 
 Two sibling repositories put these skills to work.
 [lean-self-audit-template](https://github.com/matt-w-horn/lean-self-audit-template)
