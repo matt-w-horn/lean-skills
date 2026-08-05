@@ -1,5 +1,6 @@
 # lean-skills
 
+[![skills.sh](https://skills.sh/b/matt-w-horn/lean-skills)](https://skills.sh/matt-w-horn/lean-skills)
 [![ci](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/matt-w-horn/lean-skills/actions/workflows/ci.yml)
 ![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
