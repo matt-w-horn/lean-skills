@@ -68,9 +68,14 @@ done
 For one skill, link it by name:
 `ln -s "$PWD/skills/lean-proving" ~/.claude/skills/lean-proving`.
 
-Or install it as a Claude Code plugin. The `owner/repo` shorthand clones over
-SSH, so use the HTTPS URL unless you already have a GitHub key loaded in
-`ssh-agent`:
+In the Claude apps, install it as a plugin instead: open **Customize →
+Plugins**, click **+** under **Personal plugins**, choose **Add marketplace**,
+and enter `matt-w-horn/lean-skills`. Nothing to download, and the skills then
+work in chat on the web, the Chat tab in Claude Desktop, and Cowork.
+
+The same marketplace works from the Claude Code CLI. There, the `owner/repo`
+shorthand clones over SSH, so use the HTTPS URL unless you already have a
+GitHub key loaded in `ssh-agent`:
 
 ```
 /plugin marketplace add https://github.com/matt-w-horn/lean-skills.git
