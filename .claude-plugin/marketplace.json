@@ -1,19 +1,27 @@
 {
   "name": "lean-skills",
+  "description": "Lean 4 and Mathlib skills for Claude Code.",
   "owner": {
     "name": "Matt Horn",
-    "email": "matt@matthorn.io"
-  },
-  "metadata": {
-    "description": "Claude Code skills for working in Lean 4 and Mathlib",
-    "version": "1.0.0"
+    "email": "matt@matthorn.io",
+    "url": "https://github.com/matt-w-horn"
   },
   "plugins": [
     {
       "name": "lean-skills",
       "source": "./",
-      "description": "Proving, refactoring, LaTeX/prose sync, verification, claims review, Lake builds, and Mathlib search for Lean 4 projects.",
-      "version": "1.0.0"
+      "description": "Lean 4 and Mathlib workflows: developing and refactoring proofs, searching Mathlib, driving Lake builds, and auditing whether statements and the prose citing them mean what they claim.",
+      "category": "development",
+      "keywords": [
+        "lean",
+        "lean4",
+        "mathlib",
+        "theorem-proving",
+        "formal-verification",
+        "lake",
+        "loogle",
+        "latex"
+      ]
     }
   ]
 }

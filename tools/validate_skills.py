@@ -9,8 +9,10 @@ Checks, per skill directory under skills/:
   1. SKILL.md exists.
   2. Its YAML frontmatter parses and carries `name` and `description`.
   3. `name` matches the directory name.
-  4. `description` is long enough to trigger reliably and short enough to stay
-     in the metadata budget.
+  4. `description` is long enough to trigger reliably, and `description` plus
+     `when_to_use` together stay inside the metadata budget. The runtime
+     truncates the combined text at 1,536 characters in the skill listing, so
+     the two fields share one budget and neither can be measured alone.
   5. Every relative path a skill mentions in backticks or as a Markdown link
      target resolves on disk, when it is checkable from here: paths under
      references/ always, paths under a subdirectory this skill actually has
@@ -46,6 +48,14 @@ SKILLS_DIR = REPO_ROOT / "skills"
 
 # Bounds on the description field. Too short and the model cannot tell when the
 # skill applies; too long and it crowds the always-resident metadata budget.
+#
+# The ceiling is a hard runtime limit, not a style preference: Claude Code
+# appends `when_to_use` to `description` in the skill listing and truncates the
+# combined text at 1,536 characters, so the tail of a longer description is
+# never seen and the two fields spend one budget between them. 1500 leaves a
+# little room for the runtime's own separator.
+#
+#   https://code.claude.com/docs/en/skills#skill-frontmatter-fields
 MIN_DESCRIPTION = 80
 MAX_DESCRIPTION = 1500
 
@@ -136,11 +146,18 @@ def check_skill(skill_dir: Path, all_skill_names: set[str]) -> list[str]:
 
     if not description:
         problems.append(f"{rel}/SKILL.md: frontmatter has no `description`")
-    elif not MIN_DESCRIPTION <= len(description) <= MAX_DESCRIPTION:
-        problems.append(
-            f"{rel}/SKILL.md: description is {len(description)} chars; "
-            f"keep it between {MIN_DESCRIPTION} and {MAX_DESCRIPTION}"
-        )
+    else:
+        # `when_to_use` is appended to `description` in the listing, so the
+        # budget applies to the pair. Measured together, reported together.
+        listed = len(description) + len(fields.get("when_to_use", ""))
+        if not MIN_DESCRIPTION <= listed <= MAX_DESCRIPTION:
+            shown = "description" if listed == len(description) else (
+                "description + when_to_use"
+            )
+            problems.append(
+                f"{rel}/SKILL.md: {shown} is {listed} chars; "
+                f"keep it between {MIN_DESCRIPTION} and {MAX_DESCRIPTION}"
+            )
 
     markdown = sorted(skill_dir.rglob("*.md"))
     # Local paths each Markdown file mentions, keyed by the file's path
