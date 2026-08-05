@@ -1,11 +1,22 @@
 {
   "name": "lean-skills",
-  "description": "Proving, refactoring, LaTeX/prose sync, verification, claims review, Lake builds, and Mathlib search for Lean 4 projects.",
-  "version": "1.0.0",
+  "description": "Lean 4 and Mathlib workflows: developing and refactoring proofs, searching Mathlib, driving Lake builds, and auditing whether statements and the prose citing them mean what they claim.",
   "author": {
     "name": "Matt Horn",
-    "email": "matt@matthorn.io"
+    "email": "matt@matthorn.io",
+    "url": "https://github.com/matt-w-horn"
   },
   "homepage": "https://github.com/matt-w-horn/lean-skills",
-  "license": "Apache-2.0"
+  "repository": "https://github.com/matt-w-horn/lean-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "lean",
+    "lean4",
+    "mathlib",
+    "theorem-proving",
+    "formal-verification",
+    "lake",
+    "loogle",
+    "latex"
+  ]
 }

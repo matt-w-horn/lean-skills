@@ -75,6 +75,25 @@ class TestStructure(Tree):
         self.assertTrue(any("description is 5 chars" in p
                             for p in self.check("terse")))
 
+    def test_when_to_use_counts_toward_the_description_budget(self):
+        # The runtime appends `when_to_use` to `description` in the skill
+        # listing and truncates the pair. A description that fits alone can
+        # still lose its tail once when_to_use is added, so the two are
+        # measured together or not at all.
+        long = "x" * (vs.MAX_DESCRIPTION - 100)
+        self.make_skill("verbose",
+                        f"---\nname: verbose\ndescription: {long}\n"
+                        f"when_to_use: {'y' * 200}\n---\n")
+        problems = self.check("verbose")
+        self.assertTrue(any("description + when_to_use" in p for p in problems),
+                        problems)
+
+    def test_short_when_to_use_stays_within_budget(self):
+        self.make_skill("concise",
+                        f"---\nname: concise\ndescription: {DESC}\n"
+                        "when_to_use: When the task is a concise one.\n---\n")
+        self.assertEqual(self.check("concise"), [])
+
     def test_quoted_name_matches_directory(self):
         # The runtime's YAML parser sees `lake`, not `"lake"`.
         self.make_skill("quoted",

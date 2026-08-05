@@ -67,8 +67,29 @@ done
 For one skill, link it by name:
 `ln -s "$PWD/skills/lean-proving" ~/.claude/skills/lean-proving`.
 
-Or add the repository as a plugin marketplace:
-`/plugin marketplace add matt-w-horn/lean-skills`.
+Or install it as a Claude Code plugin. The `owner/repo` shorthand clones over
+SSH, so use the HTTPS URL unless you already have a GitHub key loaded in
+`ssh-agent`:
+
+```
+/plugin marketplace add https://github.com/matt-w-horn/lean-skills.git
+/plugin install lean-skills@lean-skills
+```
+
+The shorthand `/plugin marketplace add matt-w-horn/lean-skills` works too, and
+setting `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` makes it clone over HTTPS as well.
+
+To pull later changes, refresh the catalog and then the plugin:
+
+```
+/plugin marketplace update lean-skills
+/plugin update lean-skills@lean-skills
+```
+
+Neither manifest sets a `version`, so every commit here is its own version and
+an update always has something to deliver. Third-party marketplaces have
+background auto-update off by default, so the two commands above are the manual
+path.
 
 The `loogle` skill documents how to install the
 [loogle](https://github.com/nomeata/loogle) binary. That install is optional:
