@@ -1,3 +1,12 @@
-.DS_Store
+# Python bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Secrets and local credentials (.env.example stays tracked).
+.env
+.env.*
+!.env.example
+
+# Claude Code working files (also global; repeated so clones get it too).
+.claude/
+CLAUDE.md
