@@ -1,6 +1,6 @@
 ---
 name: lean-verification
-description: Check whether Lean work actually establishes what it claims. Use whenever the question is "does this really prove X?", "does this build?", "is this sorry-free?", "is my theorem vacuous or junk-true?", "does anything actually satisfy these hypotheses?", "has anyone already formalized this?", or "does this meet my acceptance criteria" — and whenever working through a list of release requirements, auditing a library before tagging it, or reviewing a proof someone else wrote. Use it even when the check looks simple enough to answer directly, because a wrong formalization produces exactly the same green `lake build` and the same plausible-looking statement as a right one. For auditing prose, docstrings, or LaTeX against the code, use lean-latex-sync instead.
+description: Check whether Lean work and its accompanying prose or docstrings actually establish what they claim. Use whenever the question is "does this really prove X?", "does this build?", "is this sorry-free?", "is my theorem vacuous or junk-true?", "does anything actually satisfy these hypotheses?", "does this docstring or paper claim match the Lean statement?", "has anyone already formalized this?", or "does this meet my acceptance criteria?" and whenever working through a list of release requirements, auditing a library before tagging it, or reviewing a proof someone else wrote. Use it even when the check looks simple enough to answer directly, because a wrong formalization produces the same green `lake build` and the same plausible-looking statement as a right one.
 ---
 
 # Verifying Lean work
@@ -28,7 +28,7 @@ everything above it meaningless.
 | 3 | Do the linters and the project's own gates pass? | `references/evidence-ladder.md` |
 | 4 | Does each statement mean what it claims? | `references/soundness-audit.md` |
 | 5 | Is it non-vacuous: does anything satisfy the hypotheses? | `references/soundness-audit.md` |
-| 6 | Does the prose match? | the **`lean-latex-sync`** skill |
+| 6 | Does the prose or docstring match the statement? | `references/claim-checking.md` |
 | 7 | Has it been formalized before? | `references/prior-art.md` |
 | 8 | Does it meet the stated criteria? | `references/acceptance-criteria.md` |
 
@@ -87,6 +87,6 @@ NOT RUN   runLinter — Batteries not in this project's dependencies
 `NOT RUN` is a real and useful line. Omitting a check silently is how a
 verification report becomes misleading without containing a false sentence.
 
-Sibling skills: **`lean-proving`** to fix what this finds, **`lean-latex-sync`**
-for the prose-versus-statement rung, and **`lake`** when the build itself is
-the problem.
+Sibling skills: **`lean-proving`** to fix what this finds (and for Lake build
+or toolchain troubleshooting), and **`lean-claims-review`** when the project
+maintains a blinded docstring-versus-statement ledger.

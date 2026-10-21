@@ -99,7 +99,7 @@ act, never a review side effect.
 | `references/referee-protocol.md` | Dispatching referees: the verbatim protocol prompt, verdict schema, probe battery |
 | `references/dispatch.md` | Planning a sweep: waves, cache structure, effort/model/budget policy, calibration procedure |
 
-Sibling skills: `lean-latex-sync` owns prose-truthfulness craft and the
-drift taxonomy the verdict axes come from; `lean-verification` audits
-whether a proof establishes its claim (a statement-side question);
-`lean-proving` for acting on `statement-suspect` findings.
+Sibling skills: `lean-verification` (`lean-verification/references/claim-checking.md`
+and `lean-verification/references/soundness-audit.md`) owns the drift taxonomy
+and statement-side soundness audit; `lean-proving` is for acting on
+`statement-suspect` findings.

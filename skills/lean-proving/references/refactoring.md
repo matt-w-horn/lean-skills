@@ -1,16 +1,12 @@
----
-name: lean-refactoring
-description: Simplify, golf, shorten, deduplicate, or restructure existing Lean 4 proofs without changing what is proved. Use for simplification and cleanup passes, "make this proof shorter", reducing line count, collapsing tactic blocks, converting tactic proofs to term proofs, and merging duplicated proof work — and for the guard question every such pass owes an answer, "did this refactor change any statement?". The contract is that statements stay frozen while proof bodies change freely. For writing a new proof, fixing a broken one, or designing a statement, use lean-proving instead.
----
-
 # Refactoring proofs without changing what is proved
 
 In a proof library the statements are the test assertions and the proof bodies
 are the implementation. The kernel guarantees that whatever proof you write
 establishes the statement above it, so a refactor preserves meaning exactly
 when two things hold: the build is green, and no statement moved. The first is
-free. The second is the discipline of this skill, because nothing in a green
-build reports that a statement changed while you were shortening its proof.
+free. The second is the discipline of this reference, because nothing in a
+green build reports that a statement changed while you were shortening its
+proof.
 
 That makes the acceptance test mechanical: green build plus an empty
 statement-freeze diff means meaning preserved, with no human re-reading of the
@@ -20,9 +16,8 @@ proofs.
 
 Find the project's statement freeze before editing anything. It is usually a
 tracked lock file of statements (often `tests/*.lock`) with commands to check
-and to regenerate it, or a statement-digest check inside a verify script
-(`lean-latex-sync/references/sync-checks.md` describes that form). If the
-project has neither, snapshot the statements yourself first, from the
+and to regenerate it, or a statement-digest check inside a verify script. If
+the project has neither, snapshot the statements yourself first, from the
 elaborated environment, and diff against the snapshot after every slice.
 `references/statement-freeze.md` has a working ~50-line lock that drops into
 any project, and explains why elaborated types are the right thing to freeze:
@@ -64,8 +59,8 @@ nothing consumes and arguments nothing uses, and `unusedHavesSuffices` and
 
 ## Golfing moves
 
-Roughly in the order worth trying (`lean-proving/references/tactics.md` has the
-verified tactic detail):
+Roughly in the order worth trying (`references/tactics.md` has the verified
+tactic detail):
 
 - **Squeeze exploratory tactics into explicit forms.** `simp?` prints the `simp
   only [...]` that reproduces a closing `simp`; `exact?`/`rw?` print the term or
@@ -89,12 +84,3 @@ A proof that only works after weakening the statement, adding a hypothesis, or
 nudging a definition is a statement change wearing a golf's clothes. Report it
 and stop; the assertion does not move to fit the implementation. A freeze diff
 you cannot explain is a finding too, not noise to regenerate away.
-
-## Related
-
-`references/statement-freeze.md` covers setting up or evaluating a freeze, with
-the working elaborated-type lock. Sibling skills: **`lean-proving`** for writing
-or fixing proofs and for statement design; **`lean-verification`** for whether
-the refactored library still meets its gates; **`lean-latex-sync`** when a
-statement change does happen and prose must move with it; **`lake`** for wiring
-the freeze into `lake test`.

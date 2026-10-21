@@ -11,7 +11,7 @@ formalization: whether a statement means what it claims, and whether the
 prose citing it is still true. Tactic inventories, linter names, and
 error strings were extracted from the toolchain rather than recalled.
 
-Seven skills, one per job. Topic-shaped skills fail in a specific way: a
+Three skills, one per job. Topic-shaped skills fail in a specific way: a
 "tactics" skill and a "Mathlib" skill would both match every Lean task,
 so both would load, and neither would tell the agent what to do next. A
 task-shaped skill fires when its task comes up, and carries the workflow
@@ -19,13 +19,9 @@ for it.
 
 | Skill | Fires when | Covers |
 |---|---|---|
-| `lean-proving` | You are changing Lean source, or asking whether something is provable | Feasibility, prior art, statement design, tactics, decoding errors, Mathlib naming |
-| `lean-refactoring` | You are simplifying or golfing existing proofs | The frozen-statements contract, proof-vs-statement changes, the slice loop, a working elaborated-statement lock |
-| `lean-latex-sync` | Prose describes Lean code: a paper, README, or docstring | Claim-versus-statement auditing, drift classes, resyncing prose after a stream of Lean commits, `\lean{}` citation checks, listings/minted setup |
-| `lean-verification` | You are asking whether work is actually correct or complete | Build and axiom evidence, junk values and vacuity, prior-art searches, acceptance criteria |
+| `lean-proving` | You are writing, refactoring, searching, or building Lean source | Statement design, tactics, `loogle` and Mathlib lemma search, decoding errors, Mathlib naming, proof refactoring under a statement freeze, Lake builds and `module` migration |
+| `lean-verification` | You are asking whether work or its prose is actually correct or complete | Build and axiom evidence, junk values and vacuity, prose-versus-statement drift classes, prior-art searches, acceptance criteria |
 | `lean-claims-review` | A project keeps a claims ledger and pairs need verdicts | Blinded referee dispatch, verdict schema, probe battery, wave ordering, calibration |
-| `lake` | The build, the toolchain, or a new project's setup is the problem | `lake build`, Mathlib cache, toolchains, dependencies, `lake test`/`lake lint` drivers, module-system migration, troubleshooting |
-| `loogle` | You need a lemma that probably already exists | Shape-based and conclusion-based search over Mathlib |
 
 ## The failure the kernel doesn't catch
 
@@ -54,7 +50,7 @@ repeatedly, and give the commands.
 
 ## Installing
 
-Symlink all seven into `~/.claude/skills/`:
+Symlink all three into `~/.claude/skills/`:
 
 ```sh
 git clone https://github.com/matt-w-horn/lean-skills.git
@@ -92,7 +88,7 @@ an update always has something to deliver. Third-party marketplaces have
 background auto-update off by default, so the two commands above are the manual
 path.
 
-The `loogle` skill documents how to install the
+`lean-proving/references/finding-lemmas.md` documents how to install the
 [loogle](https://github.com/nomeata/loogle) binary. That install is optional:
 a hosted instance at <https://loogle.lean-lang.org/> needs no install. Nothing
 else here has dependencies. The skills are Markdown. The only code is two
@@ -109,8 +105,8 @@ skills/<name>/
 └── scripts/        # bundled tooling, where a skill has any
 ```
 
-Only `SKILL.md` is required. `lake` and `loogle` are a single file each, and
-`lean-claims-review` is the one skill that bundles code.
+Only `SKILL.md` is required, and `lean-claims-review` is the one skill that
+bundles code.
 
 The frontmatter is always in context, the body loads when the skill triggers,
 and reference files load only when `SKILL.md` points at them. Version-pinned

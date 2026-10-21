@@ -1,6 +1,6 @@
 ---
 name: lean-proving
-description: Write and plan Lean 4 proofs and definitions. Use whenever a task adds or changes Lean source — proving a new theorem, stating a definition, fixing a broken proof, closing a `sorry` — and equally for the design questions that come first: "could we prove X?", "how would I show Y?", "is this feasible in Lean?", "how should I phrase this statement?", "where do the quantifiers go?", "do I actually need this hypothesis?". Use it for any question about how a statement should be written, even before a line of Lean exists. Also use when a proof is stuck, a tactic fails, an error message is opaque, or a remembered Mathlib lemma name turns out not to exist.
+description: Write, plan, search, build, and refactor Lean 4 proofs and definitions. Use whenever a task adds, changes, simplifies, or builds Lean source: proving a new theorem, stating a definition, fixing a broken proof, closing a `sorry`, golfing or refactoring proofs under a statement freeze, searching Mathlib by name or `loogle` shape, or troubleshooting `lake build`, Mathlib caches, toolchains, `lake test`/`lake lint` drivers, and Lean 4 `module` migration. Equally use for the design questions that come first: "could we prove X?", "how would I show Y?", "is this feasible in Lean?", "how should I phrase this statement?", "where do the quantifiers go?", "do I actually need this hypothesis?", or "is there already a lemma for this?".
 ---
 
 # Writing Lean
@@ -41,7 +41,7 @@ Three ways to confirm, fastest first:
 # 1. Grep the Mathlib source that is already on disk at your exact pin
 grep -rn "theorem mul_le_mul_left" .lake/packages/mathlib/Mathlib/ | head
 
-# 2. Ask loogle by shape rather than by name (see the `loogle` skill)
+# 2. Ask loogle by shape rather than by name (see `references/finding-lemmas.md`)
 loogle '|- _ * _ ≤ _ * _'
 ```
 
@@ -84,14 +84,14 @@ the surface that later changes have to preserve.
 | File | Read it when |
 |---|---|
 | `references/tactics.md` | Choosing a tactic; needing the verified inventory at a pin |
-| `references/finding-lemmas.md` | Looking for an existing lemma, definition, or idiom |
+| `references/finding-lemmas.md` | Looking for an existing lemma, definition, or idiom (`grep`, `loogle` shape search, `exact?`) |
 | `references/statement-design.md` | Writing a statement or definition; worried it is junk-true |
 | `references/errors.md` | An error message or elaboration failure is opaque |
 | `references/naming.md` | Naming a declaration Mathlib-style |
+| `references/refactoring.md` | Golfing, simplifying, or restructuring existing proofs while every statement stays frozen |
+| `references/statement-freeze.md` | Setting up or checking an elaborated-type statement lock |
+| `references/lake.md` | Building with Lake, fetching the Mathlib cache, wiring `lake test`/`lake lint`, or migrating to `module` |
 
-Sibling skills: **`lean-refactoring`** for golfing, simplifying, or
-restructuring existing proofs while every statement stays frozen;
-**`lean-verification`** for checking that a finished proof
-proves what it claims; **`lean-latex-sync`** for the prose or LaTeX that has to
-change alongside the Lean; **`lake`** for builds, toolchains, and dependencies;
-**`loogle`** for shape-based lemma search.
+Sibling skills: **`lean-verification`** for checking that a finished proof
+and its prose establish what they claim; **`lean-claims-review`** for running
+blinded referee sweeps over a project's docstring-versus-statement ledger.
