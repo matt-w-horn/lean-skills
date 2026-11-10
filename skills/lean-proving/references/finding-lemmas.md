@@ -3,7 +3,7 @@
 Mathlib carries on the order of 200,000 declarations. Two consequences shape
 how to work: almost any general-purpose fact you need is already there, and
 you will almost never guess its name. Searching is not a fallback for when
-you are stuck — it is the first step of proving.
+you are stuck: it is the first step of proving.
 
 ## The search ladder
 
@@ -30,15 +30,61 @@ Useful directory intuition: `Mathlib/Order/` for lattices and monotonicity,
 filters and continuity, `Mathlib/Algebra/Order/` for ordered-field arithmetic,
 `Mathlib/Data/` for concrete types, `Mathlib/Probability/` for measure and PMF.
 
-### 2. Search by shape with the `loogle` skill
+### 2. Search by shape with `loogle`
 
 When you know what the statement *looks like* but not what it is called,
-loogle searches by subexpression and by conclusion rather than by name. Invoke
-the **`loogle`** skill for query syntax and setup; the short version is that
-`|- _ * _ ≤ _ * _` finds lemmas concluding in that shape, and comma-separated
-filters combine with AND.
-
+`loogle` searches by subexpression and by conclusion rather than by name.
 Reach for it before writing anything longer than three lines by hand.
+
+#### Hosted or local
+
+- **Hosted, no install**: <https://loogle.lean-lang.org/> runs the query
+  language against a recent Mathlib. Confirm any hit against your own pin with
+  `#check`.
+- **Locally, against your own project**:
+  ```sh
+  git clone https://github.com/nomeata/loogle.git ~/.local/share/loogle
+  cd ~/.local/share/loogle
+  cp /path/to/your-project/lean-toolchain .    # match the project you will search
+  lake build
+  ```
+  Run it from **inside** the Lean project you want to search (so `lake env`
+  sets `LEAN_PATH` from the current directory's lakefile):
+  ```sh
+  cd /path/to/your-project
+  lake env ~/.local/share/loogle/.lake/build/bin/loogle '<query>'
+  ```
+  The first query against a project takes several minutes while `loogle` builds
+  `Mathlib.loogle-index`; every later query reuses the index and returns in
+  seconds. For projects on different toolchains, keep a separate `loogle`
+  checkout per toolchain rather than rebuilding back and forth.
+
+#### Query syntax
+
+One query string, up to five filter forms, comma-separated. Comma means AND.
+Metavariables written `?a` are independent per filter.
+
+| Form | Example | Finds |
+|---|---|---|
+| By constant | `Real.sin` | lemmas whose statement mentions `Real.sin` |
+| By name substring | `"differ"` | lemmas with `differ` in their **name** |
+| By subexpression | `_ * (_ ^ _)` | statements containing that shape anywhere |
+| Non-linear subexpression | `Real.sqrt ?a * Real.sqrt ?a` | the same metavariable in both positions |
+| By conclusion | `\|- tsum _ = _ * tsum _` | the **conclusion** (right of all `→`/`∀`) has this shape |
+| Conclusion plus hypothesis | `\|- _ < _ → tsum _ < tsum _` | that conclusion, with such a hypothesis anywhere |
+| Data versus proofs | `⊢ (_ : Type _)` / `⊢ (_ : Prop)` | data-producing defs versus theorems |
+
+Combined, these narrow fast:
+
+```sh
+loogle 'Real.sin, "two", _ * _, |- _ < _ → _'
+loogle '(List.replicate (_ + _) _ = _)'
+loogle '|- Monotone _ → Monotone _'
+```
+
+Useful flags: `--module YourLib` (restrict to your library), `--json` / `-j`,
+`--max-results n` (default 200), `--interactive` / `-i` (one query per line on
+stdin), and `--index-mode write` (rebuild stale cache).
 
 ### 3. Ask Lean, in the file
 
@@ -56,27 +102,20 @@ example (x : ℝ) (hx : 0 < x) : 0 < x ^ 2 := by hint
 
 `exact?` looks for a single lemma closing the goal. `apply?` allows leftover
 subgoals. `rw?` lists rewrites that apply. `hint` runs a panel of tactics and
-reports which make progress — a good "I have no idea where to start" move.
-
-Add `says` or read the suggestion and paste it; leaving `exact?` in committed
-source makes every future build pay for the search.
+reports which make progress. Add `says` or read the suggestion and paste it;
+leaving `exact?` in committed source makes every future build pay for the
+search.
 
 ### 4. Natural-language search
 
-When you know the mathematical concept but not its Mathlib vocabulary — the
-gap is "what do they call this?" rather than "what is the name?".
+When you know the mathematical concept but not its Mathlib vocabulary:
 
-- **LeanSearch** — <https://leansearch.net/> — natural-language queries over
-  Mathlib statements
-- **LeanExplore** — <https://www.leanexplore.com/> — natural-language search
-  over Lean declarations
-- **Loogle web** — <https://loogle.lean-lang.org/> — the hosted form of the
-  same shape search
-- **Mathlib API docs** — <https://leanprover-community.github.io/mathlib4_docs/>
-  — browsable, with the module hierarchy visible
+- **LeanSearch**: <https://leansearch.net/> (natural-language queries over Mathlib statements)
+- **LeanExplore**: <https://www.leanexplore.com/> (natural-language search over Lean declarations)
+- **Loogle web**: <https://loogle.lean-lang.org/> (hosted shape search)
+- **Mathlib API docs**: <https://leanprover-community.github.io/mathlib4_docs/> (browsable module hierarchy)
 
-These reach the network and search *some* Mathlib revision, not necessarily
-yours. Treat a hit as a name to confirm against your pin with `#check`.
+Treat any network hit as a name to confirm against your pin with `#check`.
 
 ## Has anyone formalized this theorem at all?
 

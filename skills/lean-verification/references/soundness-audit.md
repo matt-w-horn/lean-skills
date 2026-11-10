@@ -93,9 +93,9 @@ without naming its hypotheses. If you cannot, look harder at what it proves.
 ## Prose versus statement
 
 Every English surface describing a declaration is a claim: the docstring, the
-README row, any document citing it. The **`lean-latex-sync`** skill owns this
-pass and carries the full drift catalogue. The short form is to check each
-claim on five axes: quantifier, hypothesis, direction, strength, existence.
+README row, any document citing it. `references/claim-checking.md` carries the
+full 10-class drift catalogue. The short form is to check each claim on five
+axes: quantifier, hypothesis, direction, strength, existence.
 
 ## Does the proof prove the theorem, or an easier one?
 
