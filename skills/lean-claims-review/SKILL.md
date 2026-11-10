@@ -1,6 +1,7 @@
 ---
 name: lean-claims-review
-description: Run blinded docstring-vs-statement reviews over a Lean library. Use when a project keeps a claims ledger (verdicts that each docstring claims exactly what its statement proves) and asks to review pairs — bootstrapping a full sweep, re-reviewing declarations a gate reports stale, or calibrating referee configurations. Dispatches one blinded referee subagent per declaration; the referee sees the statement, the docstring, and verified dependency docstrings, never the source tree. Also use for the design questions: which effort level referees need, how to order a sweep, when a mismatch indicts the statement instead of the prose.
+description: >-
+  Run blinded docstring-vs-statement reviews over a Lean library. Use when a project keeps a claims ledger (verdicts that each docstring claims exactly what its statement proves) and asks to review pairs — bootstrapping a full sweep, re-reviewing declarations a gate reports stale, or calibrating referee configurations. Dispatches one blinded referee subagent per declaration; the referee sees the statement, the docstring, and verified dependency docstrings, never the source tree. Also use for the design questions: which effort level referees need, how to order a sweep, when a mismatch indicts the statement instead of the prose.
 ---
 
 # Blinded claims review

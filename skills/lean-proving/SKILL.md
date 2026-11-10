@@ -1,6 +1,7 @@
 ---
 name: lean-proving
-description: Write, plan, search, build, and refactor Lean 4 proofs and definitions. Use whenever a task adds, changes, simplifies, or builds Lean source: proving a new theorem, stating a definition, fixing a broken proof, closing a `sorry`, golfing or refactoring proofs under a statement freeze, searching Mathlib by name or `loogle` shape, or troubleshooting `lake build`, Mathlib caches, toolchains, `lake test`/`lake lint` drivers, and Lean 4 `module` migration. Equally use for the design questions that come first: "could we prove X?", "how would I show Y?", "is this feasible in Lean?", "how should I phrase this statement?", "where do the quantifiers go?", "do I actually need this hypothesis?", or "is there already a lemma for this?".
+description: >-
+  Write, plan, search, build, and refactor Lean 4 proofs and definitions. Use whenever a task adds, changes, simplifies, or builds Lean source: proving a new theorem, stating a definition, fixing a broken proof, closing a `sorry`, golfing or refactoring proofs under a statement freeze, searching Mathlib by name or `loogle` shape, or troubleshooting `lake build`, Mathlib caches, toolchains, `lake test`/`lake lint` drivers, and Lean 4 `module` migration. Equally use for the design questions that come first: "could we prove X?", "how would I show Y?", "is this feasible in Lean?", "how should I phrase this statement?", "where do the quantifiers go?", "do I actually need this hypothesis?", or "is there already a lemma for this?".
 ---
 
 # Writing Lean
